@@ -1,0 +1,17 @@
+# Load environment variables from .env file
+Get-Content .env | ForEach-Object {
+    $name, $value = $_.split('=')
+    if ($name -and $value) {
+        Set-Content env:\$name $value
+    }
+}
+
+Write-Host "Creating database..."
+# Replace these with your MySQL credentials
+mysql -u [USERNAME] -p[PASSWORD] -e "DROP DATABASE IF EXISTS crusty; CREATE DATABASE crusty;"
+
+Write-Host "Running migrations..."
+Get-Content ../database/migrations/001_create_users.sql | mysql -u [USERNAME] -p[PASSWORD] crusty
+Get-Content ../database/migrations/002_create_media.sql | mysql -u [USERNAME] -p[PASSWORD] crusty
+
+Write-Host "Database initialization complete!" 

@@ -1,0 +1,11 @@
+C:\Users\coryj\Documents\Projects\crusty\backend\target\debug\deps\libserde_plain-9a068826998c4e12.rmeta: C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\lib.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\de.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\error.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\macros.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\ser.rs
+
+C:\Users\coryj\Documents\Projects\crusty\backend\target\debug\deps\libserde_plain-9a068826998c4e12.rlib: C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\lib.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\de.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\error.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\macros.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\ser.rs
+
+C:\Users\coryj\Documents\Projects\crusty\backend\target\debug\deps\serde_plain-9a068826998c4e12.d: C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\lib.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\de.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\error.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\macros.rs C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\ser.rs
+
+C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\lib.rs:
+C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\de.rs:
+C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\error.rs:
+C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\macros.rs:
+C:\Users\coryj\.cargo\registry\src\index.crates.io-6f17d22bba15001f\serde_plain-1.0.2\src\ser.rs:

@@ -1,0 +1,16 @@
+USE crusty;
+
+CREATE TABLE IF NOT EXISTS media (
+    id BINARY(16) NOT NULL,
+    user_id BINARY(16) NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    file_size BIGINT NOT NULL,
+    mime_type VARCHAR(255) NOT NULL,
+    encrypted_key VARBINARY(512) NOT NULL,
+    encryption_iv VARBINARY(16) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
+); 

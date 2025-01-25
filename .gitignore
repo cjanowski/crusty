@@ -1,0 +1,38 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Node
+node_modules/
+dist/
+.cache/
+.parcel-cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Application specific
+/backend/storage/
+*.log
+/backend/run.ps1
+/backend/init_db.ps1
+
+# Build outputs
+/dist/
+/build/
+*.exe
+*.pdb
+*.dll 

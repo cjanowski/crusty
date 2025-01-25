@@ -1,0 +1,32 @@
+[package]
+name = "crusty"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Web Framework
+actix-web = "4.5.1"
+actix-files = "0.6.5"
+actix-multipart = "0.6.1"
+
+# Authentication
+jsonwebtoken = "9.2.0"
+bcrypt = "0.10.1"
+
+# Database
+sqlx = { version = "0.7.3", features = ["runtime-tokio", "mysql", "macros", "uuid", "time"] }
+tokio = { version = "1.36.0", features = ["full"] }
+
+# Encryption
+ring = "0.17.7"
+
+# Utility
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+uuid = { version = "1.6.1", features = ["v4", "serde"] }
+dotenv = "0.15.0"
+env_logger = "0.11.1"
+log = "0.4.20"
+futures = "0.3.30"
+time = { version = "0.3", features = ["serde"] }
+actix-cors = "0.6" 
