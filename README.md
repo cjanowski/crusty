@@ -88,8 +88,8 @@ The frontend development server will start on http://localhost:5173
 ### Backend (.env)
 ```
 RUST_LOG=debug
-DATABASE_URL=mysql://root:Tesla86!!@localhost:3306/crusty
-JWT_SECRET=dK8Lp#mN9$qR2@vX5*zY7&jW4
+DATABASE_URL=mysql://root:password@localhost:3306/crusty
+JWT_SECRET=sdkjfhsdjkfh3h3
 STORAGE_PATH=./storage
 ```
 
