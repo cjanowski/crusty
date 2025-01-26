@@ -15,7 +15,14 @@ export const MediaUpload: React.FC = () => {
     const queryClient = useQueryClient();
 
     const uploadMutation = useMutation({
-        mutationFn: (file: File) => media.upload(file),
+        mutationFn: async (file: File) => {
+            try {
+                return await media.upload(file);
+            } catch (error: any) {
+                console.error('Upload error:', error);
+                throw new Error(error.response?.data?.error || 'Failed to upload file');
+            }
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['media'] });
             toast({
@@ -24,10 +31,10 @@ export const MediaUpload: React.FC = () => {
                 duration: 3000,
             });
         },
-        onError: () => {
+        onError: (error: Error) => {
             toast({
                 title: 'Upload failed',
-                description: 'Failed to upload file',
+                description: error.message,
                 status: 'error',
                 duration: 3000,
             });
@@ -36,13 +43,16 @@ export const MediaUpload: React.FC = () => {
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         if (acceptedFiles.length > 0) {
-            uploadMutation.mutate(acceptedFiles[0]);
+            const file = acceptedFiles[0];
+            console.log('Uploading file:', file.name, file.type, file.size);
+            uploadMutation.mutate(file);
         }
     }, [uploadMutation]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         maxFiles: 1,
+        multiple: false,
     });
 
     return (
@@ -70,7 +80,7 @@ export const MediaUpload: React.FC = () => {
                                 ? 'Drop the file here'
                                 : 'Drag and drop a file here, or click to select'}
                         </Text>
-                        {uploadMutation.isLoading && (
+                        {uploadMutation.isPending && (
                             <Text color="purple.500">Uploading...</Text>
                         )}
                     </VStack>
@@ -78,7 +88,7 @@ export const MediaUpload: React.FC = () => {
                 <Button
                     colorScheme="purple"
                     onClick={() => document.querySelector('input')?.click()}
-                    isDisabled={uploadMutation.isLoading}
+                    isDisabled={uploadMutation.isPending}
                 >
                     Select File
                 </Button>

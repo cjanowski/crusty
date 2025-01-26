@@ -1,0 +1,1 @@
+& 'C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe' -u root -pTesla86!! crusty --execute="SELECT BIN_TO_UUID(id) as id, username, email FROM users;" 

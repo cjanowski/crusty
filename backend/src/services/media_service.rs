@@ -5,6 +5,7 @@ use std::error::Error;
 use std::path::PathBuf;
 use tokio::fs;
 use uuid::Uuid;
+use log::{debug, error};
 
 pub struct MediaService {
     pool: MySqlPool,
@@ -27,32 +28,41 @@ impl MediaService {
         media_dto: CreateMediaDto,
         file_data: Vec<u8>,
     ) -> Result<Media, Box<dyn Error>> {
+        debug!("Starting media upload process for user: {}", user_id);
+        
         // Generate a unique ID for the media
         let media_id = Uuid::new_v4();
+        debug!("Generated media ID: {}", media_id);
         
         // Generate encryption key for this file
+        debug!("Generating encryption key");
         let file_key = self.encryption_service.generate_key()?;
         
         // Encrypt the file
+        debug!("Encrypting file data");
         let (encrypted_data, encryption_iv) = self.encryption_service.encrypt(&file_data, &file_key)?;
+        debug!("File encrypted successfully. Size: {} bytes", encrypted_data.len());
         
         // Create directory if it doesn't exist
         let user_dir = self.storage_path.join(user_id.to_string());
+        debug!("Creating user directory: {:?}", user_dir);
         fs::create_dir_all(&user_dir).await?;
         
         // Save encrypted file
         let file_path = user_dir.join(media_id.to_string());
+        debug!("Saving encrypted file to: {:?}", file_path);
         fs::write(&file_path, &encrypted_data).await?;
 
+        debug!("Storing media information in database");
         // Store media information in database
-        sqlx::query!(
+        match sqlx::query!(
             r#"INSERT INTO media (
                 id, user_id, filename, file_size, mime_type, encrypted_key, encryption_iv
             ) VALUES (
                 UUID_TO_BIN(?), UUID_TO_BIN(?), ?, ?, ?, ?, ?
             )"#,
-            media_id,
-            user_id,
+            media_id.to_string(),
+            user_id.to_string(),
             media_dto.filename,
             encrypted_data.len() as i64,
             media_dto.mime_type,
@@ -60,8 +70,15 @@ impl MediaService {
             encryption_iv.to_vec()
         )
         .execute(&self.pool)
-        .await?;
+        .await {
+            Ok(_) => debug!("Media record inserted successfully"),
+            Err(e) => {
+                error!("Failed to insert media record: {}", e);
+                return Err(e.into());
+            }
+        }
 
+        debug!("Fetching inserted media record");
         // Fetch the inserted media
         let row = sqlx::query(
             r#"SELECT
@@ -76,10 +93,11 @@ impl MediaService {
                 updated_at
             FROM media WHERE id = UUID_TO_BIN(?)"#
         )
-        .bind(media_id)
+        .bind(media_id.to_string())
         .fetch_one(&self.pool)
         .await?;
 
+        debug!("Creating Media object from database row");
         let media = Media::from_row(
             Uuid::parse_str(row.get("id")).unwrap(),
             Uuid::parse_str(row.get("user_id")).unwrap(),
@@ -92,6 +110,7 @@ impl MediaService {
             row.get("updated_at")
         );
 
+        debug!("Media upload process completed successfully");
         Ok(media)
     }
 
@@ -158,7 +177,7 @@ impl MediaService {
             FROM media
             WHERE user_id = UUID_TO_BIN(?)"#
         )
-        .bind(user_id)
+        .bind(user_id.to_string())
         .fetch_all(&self.pool)
         .await?;
 

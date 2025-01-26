@@ -4,6 +4,7 @@ use futures::{StreamExt, TryStreamExt};
 use serde::Serialize;
 use uuid::Uuid;
 use std::io::Write;
+use log::{debug, error};
 
 use crate::models::{CreateMediaDto, MediaResponse};
 use crate::services::media_service::MediaService;
@@ -31,9 +32,15 @@ async fn upload_media(
     media_service: web::Data<MediaService>,
     claims: web::ReqData<Claims>,
 ) -> impl Responder {
+    debug!("Starting media upload. Claims: {:?}", claims);
+    
     let user_id = match Uuid::parse_str(&claims.sub) {
-        Ok(id) => id,
-        Err(_) => {
+        Ok(id) => {
+            debug!("Parsed user ID: {}", id);
+            id
+        },
+        Err(e) => {
+            error!("Failed to parse user ID: {}", e);
             return HttpResponse::BadRequest().json(ErrorResponse {
                 error: "Invalid user ID".to_string()
             });
@@ -59,22 +66,27 @@ async fn upload_media(
                         .map(|t| t.to_string())
                         .unwrap_or_else(|| "application/octet-stream".to_string());
                     
+                    debug!("Processing file: {} ({})", filename, content_type);
+                    
                     while let Some(chunk) = field.next().await {
                         match chunk {
                             Ok(data) => {
-                                if let Err(_) = file_data.write_all(&data) {
+                                if let Err(e) = file_data.write_all(&data) {
+                                    error!("Failed to write file data: {}", e);
                                     return HttpResponse::InternalServerError().json(ErrorResponse {
                                         error: "Failed to process file".to_string()
                                     });
                                 }
                             }
-                            Err(_) => {
+                            Err(e) => {
+                                error!("Failed to read file chunk: {}", e);
                                 return HttpResponse::InternalServerError().json(ErrorResponse {
                                     error: "Failed to read file".to_string()
                                 });
                             }
                         }
                     }
+                    debug!("File processing complete. Size: {} bytes", file_data.len());
                 }
                 _ => continue,
             }
@@ -82,6 +94,7 @@ async fn upload_media(
     }
 
     if file_data.is_empty() {
+        error!("No file data received");
         return HttpResponse::BadRequest().json(ErrorResponse {
             error: "No file provided".to_string()
         });
@@ -92,16 +105,23 @@ async fn upload_media(
         mime_type: content_type,
     };
 
+    debug!("Attempting to upload media for user {}", user_id);
     match media_service.upload_media(user_id, media_dto, file_data).await {
-        Ok(media) => HttpResponse::Created().json(MediaResponse {
-            id: media.id,
-            filename: media.filename,
-            mime_type: media.mime_type,
-            created_at: media.created_at,
-        }),
-        Err(e) => HttpResponse::InternalServerError().json(ErrorResponse {
-            error: format!("Failed to upload file: {}", e)
-        }),
+        Ok(media) => {
+            debug!("Media upload successful. ID: {}", media.id);
+            HttpResponse::Created().json(MediaResponse {
+                id: media.id,
+                filename: media.filename,
+                mime_type: media.mime_type,
+                created_at: media.created_at,
+            })
+        },
+        Err(e) => {
+            error!("Failed to upload media: {}", e);
+            HttpResponse::InternalServerError().json(ErrorResponse {
+                error: format!("Failed to upload file: {}", e)
+            })
+        },
     }
 }
 
@@ -156,21 +176,13 @@ async fn list_media(
     };
 
     match media_service.list_user_media(user_id).await {
-        Ok(media_list) => {
-            let response: Vec<MediaResponse> = media_list
-                .into_iter()
-                .map(|m| MediaResponse {
-                    id: m.id,
-                    filename: m.filename,
-                    mime_type: m.mime_type,
-                    created_at: m.created_at,
-                })
-                .collect();
-            HttpResponse::Ok().json(response)
-        }
-        Err(e) => HttpResponse::InternalServerError().json(ErrorResponse {
-            error: format!("Failed to list media: {}", e)
-        }),
+        Ok(media_list) => HttpResponse::Ok().json(media_list),
+        Err(e) => {
+            error!("Failed to list media: {}", e);
+            HttpResponse::InternalServerError().json(ErrorResponse {
+                error: format!("Failed to list media: {}", e)
+            })
+        },
     }
 }
 
