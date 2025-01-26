@@ -1,6 +1,6 @@
 ﻿# Crusty - Secure Media Storage
 
-A secure media storage application built with Rust (backend) and React/TypeScript (frontend). Features end-to-end encryption, secure user authentication, and a modern UI. I consider this more of a rust/react template CRUD application that can be adjusted with features as needed. It was build 100% on Windows, paths and variables will need to be adjusted for UNIX.
+A secure media storage application built with Rust running Tokio asynchronous (backend) and React/TypeScript (frontend). Features end-to-end encryption, secure user authentication, and a modern UI. I consider this more of a rust/react template CRUD application that can be adjusted with features as needed. It was build 100% on Windows, paths and variables will need to be adjusted for UNIX.
 
 ## Prerequisites
 
